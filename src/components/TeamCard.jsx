@@ -56,7 +56,7 @@ export default function TeamCard({ team, teamMeta, odds, oddsLoading }) {
             title="Polymarket win probability"
             aria-label={`Win probability: ${Math.round(probability * 100)}%`}
           >
-            🏆 {Math.round(probability * 100)}%
+            🏆 {(probability * 100) < 1 ? (probability * 100).toFixed(1) : Math.round(probability * 100)}%
           </span>
         ) : null}
       </div>

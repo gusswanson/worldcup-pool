@@ -105,7 +105,7 @@ export default function TeamDetailPage() {
                 return prob ? (
                   <div className="text-right">
                     <div className="text-xs text-blue-400 font-mono">
-                      🏆 {Math.round(prob * 100)}% to win
+                      🏆 {(prob * 100) < 1 ? (prob * 100).toFixed(1) : Math.round(prob * 100)}% to win
                     </div>
                     {evText && (
                       <div className={`text-sm font-mono font-semibold ${evClass}`}>
