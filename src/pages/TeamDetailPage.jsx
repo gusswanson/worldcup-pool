@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { WORLD_CUP_TEAMS } from '../lib/teams.js'
+import { usePolymarketOdds, calcEV, evLabel, evColor } from '../lib/usePolymarketOdds.js'
+
+const TOTAL_POOL = 2400
 
 function formatDate(ts) {
   if (!ts) return '—'
@@ -21,6 +24,7 @@ export default function TeamDetailPage() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const { odds } = usePolymarketOdds()
 
   useEffect(() => {
     if (!teamMeta) return
@@ -86,11 +90,31 @@ export default function TeamDetailPage() {
           </div>
 
           {team?.price && (
-            <div className="text-right">
-              <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Listed Price</div>
-              <div className="font-display text-4xl text-gold-400">
-                ${team.price.toLocaleString()}
+            <div className="text-right space-y-2">
+              <div>
+                <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide">Listed Price</div>
+                <div className="font-display text-4xl text-gold-400">
+                  ${team.price.toLocaleString()}
+                </div>
               </div>
+              {(() => {
+                const prob = odds[decodedName]
+                const ev = calcEV(prob, team.price, TOTAL_POOL)
+                const evText = evLabel(ev)
+                const evClass = evColor(ev)
+                return prob ? (
+                  <div className="text-right">
+                    <div className="text-xs text-blue-400 font-mono">
+                      🏆 {Math.round(prob * 100)}% to win
+                    </div>
+                    {evText && (
+                      <div className={`text-sm font-mono font-semibold ${evClass}`}>
+                        EV {evText}
+                      </div>
+                    )}
+                  </div>
+                ) : null
+              })()}
             </div>
           )}
         </div>

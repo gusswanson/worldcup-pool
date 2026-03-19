@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { WORLD_CUP_TEAMS } from '../lib/teams.js'
+import { usePolymarketOdds, calcEV } from '../lib/usePolymarketOdds.js'
 import TeamCard from '../components/TeamCard.jsx'
 import SearchSort from '../components/SearchSort.jsx'
 import { SkeletonGrid } from '../components/SkeletonCard.jsx'
@@ -14,6 +15,8 @@ export default function HomePage() {
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('name')
+
+  const { odds, loading: oddsLoading, error: oddsError, lastUpdated } = usePolymarketOdds()
 
   useEffect(() => {
     fetchTeams()
@@ -71,13 +74,23 @@ export default function HomePage() {
           return new Date(b.db?.updated_at || 0) - new Date(a.db?.updated_at || 0)
         case 'unowned':
           return (!a.db?.owner_name ? -1 : 1) - (!b.db?.owner_name ? -1 : 1)
+        case 'ev_best': {
+          const evA = calcEV(odds[a.meta.name], a.db?.price, TOTAL_POOL) ?? -Infinity
+          const evB = calcEV(odds[b.meta.name], b.db?.price, TOTAL_POOL) ?? -Infinity
+          return evB - evA
+        }
+        case 'ev_worst': {
+          const evA = calcEV(odds[a.meta.name], a.db?.price, TOTAL_POOL) ?? Infinity
+          const evB = calcEV(odds[b.meta.name], b.db?.price, TOTAL_POOL) ?? Infinity
+          return evA - evB
+        }
         default:
           return a.meta.name.localeCompare(b.meta.name)
       }
     })
 
     return list
-  }, [mergedTeams, search, sort])
+  }, [mergedTeams, search, sort, odds])
 
   return (
     <div className="space-y-6">
@@ -112,6 +125,35 @@ export default function HomePage() {
             <Stat label="Teams" value={WORLD_CUP_TEAMS.length} />
             <Stat label="Owned" value={ownedCount} />
             <Stat label="Listed" value={listedCount} accent />
+          </div>
+
+          {/* Polymarket live odds notice */}
+          <div className="mt-4 flex items-center gap-2 text-xs">
+            {oddsLoading ? (
+              <span className="text-gray-600 font-mono">Loading Polymarket odds…</span>
+            ) : oddsError ? (
+              <span className="text-yellow-600">⚠️ Polymarket odds unavailable</span>
+            ) : (
+              <span className="text-gray-500 flex items-center gap-1.5 flex-wrap">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                Live odds via{' '}
+                <a
+                  href="https://polymarket.com/event/2026-fifa-world-cup-winner-595"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+                  onClick={e => e.stopPropagation()}
+                >
+                  Polymarket
+                </a>
+                {lastUpdated && (
+                  <span className="text-gray-700">
+                    · updated {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+                <span className="text-gray-700">· EV = expected return vs pool price</span>
+              </span>
+            )}
           </div>
         </div>
       </section>
@@ -158,7 +200,7 @@ export default function HomePage() {
         <section aria-label="Team listings">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {filtered.map(({ meta, db }) => (
-              <TeamCard key={meta.name} team={db} teamMeta={meta} />
+              <TeamCard key={meta.name} team={db} teamMeta={meta} odds={odds} oddsLoading={oddsLoading} />
             ))}
           </div>
         </section>

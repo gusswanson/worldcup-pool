@@ -35,6 +35,8 @@ export default function SearchSort({ search, setSearch, sort, setSort, count, to
           <option value="price_desc">Price: High → Low</option>
           <option value="updated">Recently Updated</option>
           <option value="unowned">Unowned First</option>
+          <option value="ev_best">Best EV First</option>
+          <option value="ev_worst">Worst EV First</option>
         </select>
       </div>
 
