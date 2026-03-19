@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react'
 
-const POLYMARKET_EVENT_SLUG = '2026-fifa-world-cup-winner-595'
-const GAMMA_API = 'https://gamma-api.polymarket.com'
-
 // Maps Polymarket question text → our team names
 // Polymarket uses "Will X win the 2026 FIFA World Cup?"
 function extractTeamName(question) {
@@ -40,10 +37,9 @@ export function usePolymarketOdds() {
   async function fetchOdds() {
     try {
       setError(null)
-      const res = await fetch(
-        `${GAMMA_API}/events?slug=${POLYMARKET_EVENT_SLUG}&active=true`
-      )
-      if (!res.ok) throw new Error(`Polymarket API error: ${res.status}`)
+      // Call our own Vercel serverless proxy to avoid CORS issues
+      const res = await fetch('/api/polymarket')
+      if (!res.ok) throw new Error(`Proxy error: ${res.status}`)
 
       const data = await res.json()
       const event = Array.isArray(data) ? data[0] : data
