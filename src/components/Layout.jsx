@@ -18,7 +18,7 @@ export default function Layout() {
                 WC2026 POOL
               </div>
               <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest">
-                FIFA World Cup
+                by Gus Swanson
               </div>
             </div>
           </Link>

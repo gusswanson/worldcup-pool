@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase.js'
 import { WORLD_CUP_TEAMS } from '../lib/teams.js'
 import { usePolymarketOdds, calcEV } from '../lib/usePolymarketOdds.js'
 import TeamCard from '../components/TeamCard.jsx'
+import LeaderboardView from '../components/LeaderboardView.jsx'
 import SearchSort from '../components/SearchSort.jsx'
 import { SkeletonGrid } from '../components/SkeletonCard.jsx'
 
@@ -15,6 +16,7 @@ export default function HomePage() {
   const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState('name')
+  const [view, setView] = useState('grid') // 'grid' | 'leaderboard'
 
   const { odds, loading: oddsLoading, error: oddsError, lastUpdated } = usePolymarketOdds()
 
@@ -158,41 +160,87 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Search + Sort */}
-      <SearchSort
-        search={search}
-        setSearch={setSearch}
-        sort={sort}
-        setSort={setSort}
-        count={filtered.length}
-        total={WORLD_CUP_TEAMS.length}
-      />
+      {/* View toggle + Search + Sort */}
+      <div className="space-y-3">
+        {/* View mode toggle */}
+        <div className="flex items-center gap-2" role="group" aria-label="View mode">
+          <button
+            onClick={() => setView('grid')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              view === 'grid'
+                ? 'bg-gray-700 text-white'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+            aria-pressed={view === 'grid'}
+          >
+            <span aria-hidden="true">⊞</span> Grid
+          </button>
+          <button
+            onClick={() => setView('leaderboard')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+              view === 'leaderboard'
+                ? 'bg-gray-700 text-white'
+                : 'text-gray-500 hover:text-gray-300'
+            }`}
+            aria-pressed={view === 'leaderboard'}
+          >
+            <span aria-hidden="true">🏆</span> Leaderboard
+          </button>
+        </div>
+
+        {/* Search + Sort (hidden in leaderboard — it auto-sorts by odds) */}
+        {view === 'grid' && (
+          <SearchSort
+            search={search}
+            setSearch={setSearch}
+            sort={sort}
+            setSort={setSort}
+            count={filtered.length}
+            total={WORLD_CUP_TEAMS.length}
+          />
+        )}
+
+        {/* Leaderboard search only */}
+        {view === 'leaderboard' && (
+          <div className="relative">
+            <label htmlFor="lb-search" className="sr-only">Search by team or owner</label>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" aria-hidden="true">🔍</span>
+            <input
+              id="lb-search"
+              type="search"
+              className="input pl-9"
+              placeholder="Search team or owner…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Error state */}
       {error && (
-        <div
-          role="alert"
-          className="bg-red-950 border border-red-800 text-red-300 rounded-xl p-4 text-sm"
-        >
+        <div role="alert" className="bg-red-950 border border-red-800 text-red-300 rounded-xl p-4 text-sm">
           <strong>Error loading teams:</strong> {error}
           <br />
-          <span className="text-red-400 text-xs mt-1 block">
-            Check your Supabase environment variables.
-          </span>
+          <span className="text-red-400 text-xs mt-1 block">Check your Supabase environment variables.</span>
         </div>
       )}
 
-      {/* Grid */}
+      {/* Content */}
       {loading ? (
         <SkeletonGrid />
+      ) : view === 'leaderboard' ? (
+        <LeaderboardView
+          teams={filtered}
+          odds={odds}
+          oddsLoading={oddsLoading}
+          search={search}
+        />
       ) : filtered.length === 0 ? (
         <div className="text-center py-16 text-gray-600">
           <div className="text-4xl mb-3" aria-hidden="true">🔍</div>
           <p className="font-body">No teams match &ldquo;{search}&rdquo;</p>
-          <button
-            className="btn-secondary mt-4 text-sm"
-            onClick={() => setSearch('')}
-          >
+          <button className="btn-secondary mt-4 text-sm" onClick={() => setSearch('')}>
             Clear search
           </button>
         </div>
