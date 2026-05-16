@@ -11,6 +11,7 @@ function extractTeamName(question) {
 const NAME_MAP = {
   'USA': 'United States',
   'United States': 'United States',
+  'Bosnia-Herzegovina': 'Bosnia and Herzegovina'
   'South Korea': 'South Korea',
   'Korea Republic': 'South Korea',
   'Ivory Coast': 'Ivory Coast',
@@ -29,7 +30,7 @@ const NAME_MAP = {
   'Cabo Verde': 'Cape Verde',
   'Cape Verde': 'Cape Verde',
   'Turkey': 'Turkey',
-  'Türkiye': 'Turkey',
+  'Turkiye': 'Turkey',
 }
 
 function normalizeName(name) {
