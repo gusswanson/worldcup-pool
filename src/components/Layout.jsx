@@ -41,10 +41,10 @@ export default function Layout() {
       <footer className="border-t border-gray-800 mt-12">
         <div className="max-w-5xl mx-auto px-4 py-6 text-center">
           <p className="text-xs text-gray-600 font-body">
-            ⚠️ All listings are public and editable. Only submit phone numbers with permission.
+          
           </p>
           <p className="text-xs text-gray-700 mt-1">
-            FIFA World Cup 2026 · Pool Tracker · Not affiliated with FIFA
+            FIFA World Cup 2026 · Pool Tracker
           </p>
         </div>
       </footer>
