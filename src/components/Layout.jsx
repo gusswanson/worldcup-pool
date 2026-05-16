@@ -23,14 +23,7 @@ export default function Layout() {
             </div>
           </Link>
 
-          <nav aria-label="Main navigation">
-            <Link
-              to="/edit"
-              className="btn-primary text-sm py-2 px-4"
-            >
-              + Submit Team
-            </Link>
-          </nav>
+        
         </div>
       </header>
 
