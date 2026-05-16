@@ -259,7 +259,6 @@ export default function HomePage() {
         role="note"
         className="text-xs text-gray-600 text-center pb-2 border-t border-gray-800 pt-4"
       >
-        ⚠️ All listings are public and editable. Only submit phone numbers with permission.
       </div>
     </div>
   )
