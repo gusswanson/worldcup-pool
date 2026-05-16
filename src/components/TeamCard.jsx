@@ -11,7 +11,7 @@ export default function TeamCard({ team, teamMeta, odds, oddsLoading }) {
   const probability = odds?.[teamMeta.name]
   const ev = calcEV(probability, team?.price, TOTAL_POOL)
   const evText = evLabel(ev)
-  const evClass = evColor(ev)
+  const evClass = evColor(ev, team?.price)
 
   return (
     <Link
