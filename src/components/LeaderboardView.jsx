@@ -56,7 +56,7 @@ export default function LeaderboardView({ teams, odds, oddsLoading, search }) {
           const prob = odds[meta.name]
           const ev = calcEV(prob, db?.price, TOTAL_POOL)
           const evText = evLabel(ev)
-          const evClass = evColor(ev)
+          const evClass = evColor(ev, db?.price)
           const rank = index + 1
 
           return (
