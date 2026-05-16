@@ -12,9 +12,24 @@ const NAME_MAP = {
   'USA': 'United States',
   'United States': 'United States',
   'South Korea': 'South Korea',
+  'Korea Republic': 'South Korea',
   'Ivory Coast': 'Ivory Coast',
   "Côte d'Ivoire": 'Ivory Coast',
+  'Cote d\'Ivoire': 'Ivory Coast',
   'Iran': 'Iran',
+  'Bosnia': 'Bosnia and Herzegovina',
+  'Bosnia & Herzegovina': 'Bosnia and Herzegovina',
+  'Czechia': 'Czech Republic',
+  'Czech Republic': 'Czech Republic',
+  'Curacao': 'Curaçao',
+  'Curaçao': 'Curaçao',
+  'Congo': 'DR Congo',
+  'DR Congo': 'DR Congo',
+  'Democratic Republic of Congo': 'DR Congo',
+  'Cabo Verde': 'Cape Verde',
+  'Cape Verde': 'Cape Verde',
+  'Turkey': 'Turkey',
+  'Türkiye': 'Turkey',
 }
 
 function normalizeName(name) {
@@ -82,24 +97,24 @@ export function usePolymarketOdds() {
 }
 
 // Calculate expected value for a team
-// EV = (win probability × total pool prize) - listed price
+// EV = pool amount × Polymarket win probability
 export function calcEV(probability, listedPrice, totalPool = 2400) {
-  if (!probability || !listedPrice) return null
-  return Math.round(probability * totalPool - listedPrice)
+  if (!probability) return null
+  return Math.round(probability * totalPool)
 }
 
 // Human-readable EV label
 export function evLabel(ev) {
   if (ev === null) return null
-  if (ev > 0) return `+$${ev}`
-  return `-$${Math.abs(ev)}`
+  return `$${ev}`
 }
 
-// EV colour class
-export function evColor(ev) {
+// EV colour class — higher expected return is greener
+export function evColor(ev, listedPrice) {
   if (ev === null) return 'text-gray-500'
-  if (ev >= 50) return 'text-emerald-400'
-  if (ev > 0) return 'text-green-400'
-  if (ev >= -50) return 'text-yellow-400'
+  if (!listedPrice) return 'text-blue-400'
+  if (ev >= listedPrice * 1.2) return 'text-emerald-400'
+  if (ev >= listedPrice) return 'text-green-400'
+  if (ev >= listedPrice * 0.8) return 'text-yellow-400'
   return 'text-red-400'
 }
