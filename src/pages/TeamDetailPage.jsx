@@ -101,7 +101,7 @@ export default function TeamDetailPage() {
                 const prob = odds[decodedName]
                 const ev = calcEV(prob, team.price, TOTAL_POOL)
                 const evText = evLabel(ev)
-                const evClass = evColor(ev)
+                const evClass = evColor(ev, team.price)
                 return prob ? (
                   <div className="text-right">
                     <div className="text-xs text-blue-400 font-mono">
