@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['Bebas Neue', 'cursive'],
+        display: ['Montseratt'],
         body: ['DM Sans', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
