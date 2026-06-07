@@ -3,7 +3,7 @@
 // Called by the frontend at /api/polymarket
 
 const GAMMA_API = 'https://gamma-api.polymarket.com'
-const SLUG = '2026-fifa-world-cup-winner-595'
+const SLUG = 'world-cup-winner'
 
 export default async function handler(req, res) {
   // Allow requests from your own domain only
