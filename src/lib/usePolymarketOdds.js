@@ -11,7 +11,7 @@ function extractTeamName(question) {
 const NAME_MAP = {
   'USA': 'United States',
   'United States': 'United States',
-  'Bosnia-Herzegovina': 'Bosnia and Herzegovina'
+  'Bosnia-Herzegovina': 'Bosnia and Herzegovina',
   'South Korea': 'South Korea',
   'Korea Republic': 'South Korea',
   'Ivory Coast': 'Ivory Coast',
